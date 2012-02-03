@@ -227,6 +227,7 @@ function createClient (proto, stream) {
     client.destroy = stream.destroy.bind(stream);
     
     stream.on('end', client.emit.bind(client, 'end'));
+    stream.on('error', client.emit.bind(client, 'error'));
     
     client.on('request', function (req) {
         if (stream.writable) {
@@ -236,7 +237,7 @@ function createClient (proto, stream) {
             client.emit('dropped', req);
         }
     });
-    
+
     Lazy(stream).lines
         .map(String)
         .forEach(client.parse)
